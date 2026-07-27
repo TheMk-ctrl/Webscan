@@ -86,7 +86,7 @@
 ```bash
 cd webscan
 ```
-3. * **Откройте файл index.html в любом современном веб-браузере:**
+3. **Откройте файл index.html в любом современном веб-браузере:**
     * Linux/macOS: open `index.html` или `xdg-open index.html`
     * Windows: нажмите дважды на `index.html` или выполните `start index.html` в **PowerShell**.
 
