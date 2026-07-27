@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webscan — Security, SEO & AI Website Auditor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    /* === MONOCHROME ADAPTIVE THEME SYSTEM === */
+    :root {
+      --bg-color: #ffffff;
+      --bg-subtle: #f4f4f5;
+      --card-bg: #ffffff;
+      --card-border: #e4e4e7;
+      --card-border-hover: #a1a1aa;
+      --text-main: #09090b;
+      --text-muted: #71717a;
+      --text-inverse: #ffffff;
+      --accent-main: #09090b;
+      --accent-bg: #18181b;
+      --badge-bg: #f4f4f5;
+      --badge-border: #d4d4d8;
+      --code-bg: #18181b;
+      --code-text: #f4f4f5;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+      
+      --status-pass: #09090b;
+      --status-pass-bg: #f4f4f5;
+      --status-high: #09090b;
+      --status-high-bg: #09090b;
+      --status-high-text: #ffffff;
+      --status-med: #52525b;
+      --status-med-bg: #e4e4e7;
+      --status-low: #71717a;
+      --status-low-bg: #f4f4f5;
+
+      /* AI Panel Theme Tokens */
+      --ai-bg: #f8fafc;
+      --ai-border: #e2e8f0;
+      --ai-accent: #0284c7;
+      --ai-pulse: #22c55e;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #09090b;
+      --bg-subtle: #18181b;
+      --card-bg: #09090b;
+      --card-border: #27272a;
+      --card-border-hover: #52525b;
+      --text-main: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-inverse: #09090b;
+      --accent-main: #ffffff;
+      --accent-bg: #f4f4f5;
+      --badge-bg: #18181b;
+      --badge-border: #27272a;
+      --code-bg: #18181b;
+      --code-text: #f4f4f5;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+
+      --status-pass: #ffffff;
+      --status-pass-bg: #27272a;
+      --status-high: #ffffff;
+      --status-high-bg: #ffffff;
+      --status-high-text: #09090b;
+      --status-med: #a1a1aa;
+      --status-med-bg: #27272a;
+      --status-low: #71717a;
+      --status-low-bg: #18181b;
+
+      /* AI Panel Theme Tokens Dark */
+      --ai-bg: #0f172a;
+      --ai-border: #1e293b;
+      --ai-accent: #38bdf8;
+      --ai-pulse: #4ade80;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-color: #09090b;
+        --bg-subtle: #18181b;
+        --card-bg: #09090b;
+        --card-border: #27272a;
+        --card-border-hover: #52525b;
+        --text-main: #f4f4f5;
+        --text-muted: #a1a1aa;
+        --text-inverse: #09090b;
+        --accent-main: #ffffff;
+        --accent-bg: #f4f4f5;
+        --badge-bg: #18181b;
+        --badge-border: #27272a;
+        --code-bg: #18181b;
+        --code-text: #f4f4f5;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+        --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+
+        --status-pass: #ffffff;
+        --status-pass-bg: #27272a;
+        --status-high: #ffffff;
+        --status-high-bg: #ffffff;
+        --status-high-text: #09090b;
+        --status-med: #a1a1aa;
+        --status-med-bg: #27272a;
+        --status-low: #71717a;
+        --status-low-bg: #18181b;
+
+        --ai-bg: #0f172a;
+        --ai-border: #1e293b;
+        --ai-accent: #38bdf8;
+        --ai-pulse: #4ade80;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 36px;
+      border-bottom: 1px solid var(--card-border);
+      background-color: var(--bg-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.6px;
+      color: var(--text-main);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 22px;
+      height: 22px;
+      background-color: var(--accent-main);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--bg-color);
+      font-weight: 900;
+      font-size: 0.85rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 24px;
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      color: var(--text-main);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      background: transparent;
+      color: var(--text-main);
+      border: 1px solid var(--card-border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      border-color: var(--card-border-hover);
+      background-color: var(--bg-subtle);
+    }
+
+    .btn-primary {
+      background-color: var(--accent-main);
+      color: var(--text-inverse);
+      border: 1px solid var(--accent-main);
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 40px 24px;
+      flex: 1;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 60px 20px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background-color: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      color: var(--text-main);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+
+    .badge-tag {
+      background-color: var(--accent-main);
+      color: var(--text-inverse);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 580px;
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+
+    .search-box {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 6px 6px 6px 18px;
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      max-width: 560px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .search-box svg {
+      flex-shrink: 0;
+      color: var(--text-muted);
+    }
+
+    .search-box:focus-within {
+      border-color: var(--text-main);
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      flex: 1;
+      padding-right: 12px;
+    }
+
+    .search-box button {
+      background-color: var(--accent-main);
+      color: var(--text-inverse);
+      border: none;
+      padding: 10px 22px;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .features-strip {
+      margin-top: 50px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      width: 100%;
+      max-width: 860px;
+      text-align: left;
+    }
+
+    .feature-item {
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      background-color: var(--card-bg);
+    }
+
+    .feature-item h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .feature-item p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .dashboard {
+      display: none;
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      background-color: var(--card-bg);
+      padding: 24px 28px;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .overall-score {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .score-circle {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      border: 3px solid var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.9rem;
+      font-weight: 800;
+    }
+
+    .score-circle.error {
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    .score-info h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .score-info p {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    .action-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-progress {
+      background-color: var(--bg-subtle);
+      color: var(--text-main);
+      border: 1px solid var(--card-border);
+      padding: 8px 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+    }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--text-muted);
+      border-top-color: var(--text-main);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .grid-categories {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .category-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 18px 20px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cat-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .cat-score {
+      font-size: 1.8rem;
+      font-weight: 800;
+    }
+
+    /* ==========================================================================
+       УЛУЧШЕННАЯ ИИ-ПАНЕЛЬ (AI EXECUTIVE PANEL)
+       ========================================================================== */
+    .ai-summary-card {
+      background: var(--ai-bg);
+      border: 1px solid var(--ai-border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 28px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ai-summary-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--ai-accent), var(--ai-pulse), var(--ai-accent));
+      background-size: 200% 100%;
+      animation: aiGradient 4s ease infinite;
+    }
+
+    @keyframes aiGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .ai-summary-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--ai-border);
+    }
+
+    .ai-header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text-main);
+    }
+
+    .ai-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--ai-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .ai-status-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--ai-border);
+      color: var(--text-muted);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--ai-pulse);
+      box-shadow: 0 0 8px var(--ai-pulse);
+      animation: pulse 1.8s infinite;
+    }
+
+    .pulse-dot.error {
+      background-color: #ef4444;
+      box-shadow: 0 0 8px #ef4444;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+
+    .ai-summary-content {
+      font-size: 0.93rem;
+      line-height: 1.65;
+      color: var(--text-main);
+    }
+
+    .ai-summary-content p {
+      margin-bottom: 12px;
+    }
+
+    .ai-summary-content ul, .ai-summary-content ol {
+      margin-left: 22px;
+      margin-bottom: 14px;
+    }
+
+    .ai-summary-content li {
+      margin-bottom: 6px;
+    }
+
+    .ai-summary-content code {
+      background-color: var(--card-bg);
+      border: 1px solid var(--ai-border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--ai-accent);
+    }
+
+    .ai-alert-box {
+      background-color: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      color: var(--text-main);
+    }
+
+    .ai-alert-box h4 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #ef4444;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    /* Filters & Findings */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 12px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background-color: var(--badge-bg);
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .findings-count {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .finding-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+
+    .finding-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .finding-title {
+      font-weight: 600;
+      font-size: 0.98rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .severity-badge {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .sev-high {
+      background-color: var(--status-high-bg);
+      color: var(--status-high-text);
+    }
+
+    .sev-medium {
+      background-color: var(--status-med-bg);
+      color: var(--status-med);
+      border: 1px solid var(--card-border);
+    }
+
+    .sev-low {
+      background-color: var(--status-low-bg);
+      color: var(--status-low);
+      border: 1px solid var(--card-border);
+    }
+
+    .sev-pass {
+      background-color: var(--status-pass-bg);
+      color: var(--status-pass);
+      border: 1px solid var(--card-border);
+    }
+
+    .finding-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .code-block {
+      background-color: var(--code-bg);
+      color: var(--code-text);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      overflow-x: auto;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+      margin-left: 10px;
+    }
+
+    /* Modal Settings */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.9rem;
+    }
+
+    .setting-row label {
+      cursor: pointer;
+    }
+
+    .setting-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--accent-main);
+    }
+
+    .setting-row select {
+      background-color: var(--bg-subtle);
+      color: var(--text-main);
+      border: 1px solid var(--card-border);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .hidden { display: none !important; }
+
+    @media print {
+      header, .action-group, .filter-bar, .search-box, .badge, .copy-btn, .modal-overlay {
+        display: none !important;
+      }
+      body { background-color: #ffffff !important; color: #000000 !important; }
+      .container { max-width: 100% !important; padding: 0 !important; }
+      .dashboard-header, .category-card, .finding-card, .ai-summary-card {
+        border: 1px solid #000000 !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      .code-block { background: #f4f4f5 !important; color: #000000 !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="logo" onclick="resetToHome()">
+      <div class="logo-icon">W</div>
+      <span>Webscan</span>
+    </a>
+
+    <nav>
+      <a href="#" onclick="resetToHome()">Scanner</a>
+      <a href="#features">Features</a>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="btn" id="open-settings-btn" title="Audit Settings">⚙️ Settings</button>
+      <button class="btn" id="theme-toggle" title="Switch Theme">
+        <span id="theme-icon">💻</span>
+        <span id="theme-text">Auto</span>
+      </button>
+      <button class="btn btn-primary" onclick="focusSearch()">New Audit</button>
+    </div>
+  </header>
+
+  <div class="container">
+    
+    <section id="hero-section" class="hero">
+      <div class="badge">
+        <span class="badge-tag">AI-POWERED</span>
+        <span>Deep HTTP, Header & Meta Inspector</span>
+      </div>
+      
+      <h1>Security & Technical Audit for Web Apps</h1>
+      <p>Scan security headers, sensitive config leaks, CORS, SEO meta tags, and latency with instant AI breakdown.</p>
+
+      <form id="scan-form" class="search-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+        <input type="text" id="target-url" placeholder="https://example.com" required autocomplete="off">
+        <button type="submit">Scan Website</button>
+      </form>
+
+      <div class="features-strip" id="features">
+        <div class="feature-item">
+          <h3>⚡ Comprehensive Probe</h3>
+          <p>Scans 20+ parameters including HSTS, CSP, CORS, .git, sitemap, meta tags, and response latency.</p>
+        </div>
+        <div class="feature-item">
+          <h3>🤖 AI Executive Report</h3>
+          <p>Generates an automated executive summary prioritizing critical vulnerabilities and quick fixes.</p>
+        </div>
+        <div class="feature-item">
+          <h3>📄 Export & Preferences</h3>
+          <p>Customizable audit modules, CORS proxy toggle, JSON export, and print-ready PDF reporting.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="dashboard-section" class="dashboard">
+      <div class="dashboard-header">
+        <div class="overall-score">
+          <div class="score-circle" id="overall-score-val">--</div>
+          <div class="score-info">
+            <h2 id="overall-status-heading">Scanning target...</h2>
+            <p id="target-display-url">Target: -</p>
+          </div>
+        </div>
+
+        <div class="action-group">
+          <button class="btn" onclick="exportJSON()">JSON Export</button>
+          <button class="btn" onclick="exportPDF()">Export PDF</button>
+          <div class="btn-progress" id="progress-indicator">
+            <div class="spinner" id="spinner"></div>
+            <span id="scan-status-text">Initializing...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-categories">
+        <div class="category-card">
+          <div class="cat-title"><span>Security</span> 🛡️</div>
+          <div class="cat-score" id="score-security">--</div>
+        </div>
+        <div class="category-card">
+          <div class="cat-title"><span>Headers</span> 📑</div>
+          <div class="cat-score" id="score-headers">--</div>
+        </div>
+        <div class="category-card">
+          <div class="cat-title"><span>Config / Files</span> 📂</div>
+          <div class="cat-score" id="score-config">--</div>
+        </div>
+        <div class="category-card">
+          <div class="cat-title"><span>SEO & Meta</span> 🔍</div>
+          <div class="cat-score" id="score-seo">--</div>
+        </div>
+      </div>
+
+      <!-- REDESIGNED AI SUMMARY CARD -->
+      <div class="ai-summary-card">
+        <div class="ai-summary-header">
+          <div class="ai-header-title">
+            <div class="ai-avatar">⚡</div>
+            <span>ИИ-Аналитик & Executive Summary</span>
+          </div>
+          <div class="ai-status-pill">
+            <div class="pulse-dot" id="ai-pulse-indicator"></div>
+            <span id="ai-status-text">AI Engine Ready</span>
+          </div>
+        </div>
+        <div class="ai-summary-content" id="ai-summary-body">
+          Анализ результатов и генерация резюме...
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="tabs">
+          <button class="tab-btn active" onclick="filterCategory('all', this)">All Checks</button>
+          <button class="tab-btn" onclick="filterCategory('security', this)">Security</button>
+          <button class="tab-btn" onclick="filterCategory('headers', this)">Headers</button>
+          <button class="tab-btn" onclick="filterCategory('config', this)">Files</button>
+          <button class="tab-btn" onclick="filterCategory('seo', this)">SEO</button>
+        </div>
+        <div class="findings-count" id="findings-count">0 items found</div>
+      </div>
+
+      <div id="findings-container"></div>
+    </section>
+
+  </div>
+
+  <!-- MODAL SETTINGS -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Параметры и настройки аудита</h3>
+        <button class="btn" id="close-settings-btn" style="padding: 4px 10px;">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-row">
+          <label for="set-check-security">Модуль безопасности (HTTPS, SSL, Exposure)</label>
+          <input type="checkbox" id="set-check-security" checked>
+        </div>
+        <div class="setting-row">
+          <label for="set-check-headers">Заголовки HTTP (CSP, HSTS, XFO, CORS)</label>
+          <input type="checkbox" id="set-check-headers" checked>
+        </div>
+        <div class="setting-row">
+          <label for="set-check-files">Проверка файлов (.git, security.txt, sitemap)</label>
+          <input type="checkbox" id="set-check-files" checked>
+        </div>
+        <div class="setting-row">
+          <label for="set-check-seo">SEO & Meta (Title, OG tags, Canonical)</label>
+          <input type="checkbox" id="set-check-seo" checked>
+        </div>
+        <div class="setting-row">
+          <label for="set-cors-proxy">Использовать CORS-Proxy (Для закрытых CORS сайтов)</label>
+          <input type="checkbox" id="set-cors-proxy">
+        </div>
+        <div class="setting-row">
+          <label for="set-timeout">Таймаут запроса</label>
+          <select id="set-timeout">
+            <option value="3000">3 секунды</option>
+            <option value="5000" selected>5 секунд</option>
+            <option value="10000">10 секунд</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Theme Management
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const themeText = document.getElementById('theme-text');
+    let currentTheme = localStorage.getItem('webscan_theme') || 'auto';
+
+    function applyTheme(theme) {
+      currentTheme = theme;
+      localStorage.setItem('webscan_theme', theme);
+      if (theme === 'auto') {
+        document.documentElement.removeAttribute('data-theme');
+        themeIcon.textContent = '💻'; themeText.textContent = 'Auto';
+      } else if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeIcon.textContent = '🌙'; themeText.textContent = 'Dark';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        themeIcon.textContent = '☀️'; themeText.textContent = 'Light';
+      }
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      if (currentTheme === 'auto') applyTheme('dark');
+      else if (currentTheme === 'dark') applyTheme('light');
+      else applyTheme('auto');
+    });
+    applyTheme(currentTheme);
+
+    // Modal Settings Toggle
+    const settingsModal = document.getElementById('settings-modal');
+    document.getElementById('open-settings-btn').addEventListener('click', () => settingsModal.classList.add('active'));
+    document.getElementById('close-settings-btn').addEventListener('click', () => settingsModal.classList.remove('active'));
+    settingsModal.addEventListener('click', (e) => {
+      if (e.target === settingsModal) settingsModal.classList.remove('active');
+    });
+
+    const scanForm = document.getElementById('scan-form');
+    const heroSection = document.getElementById('hero-section');
+    const dashboardSection = document.getElementById('dashboard-section');
+    const targetUrlInput = document.getElementById('target-url');
+    const statusText = document.getElementById('scan-status-text');
+    const spinner = document.getElementById('spinner');
+    const findingsContainer = document.getElementById('findings-container');
+
+    let currentAuditData = { url: '', timestamp: '', scores: {}, findings: [] };
+
+    function resetToHome() {
+      heroSection.style.display = 'flex';
+      dashboardSection.style.display = 'none';
+    }
+
+    function focusSearch() {
+      resetToHome();
+      targetUrlInput.focus();
+    }
+
+    scanForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      let inputUrl = targetUrlInput.value.trim();
+      if (!inputUrl) return;
+
+      if (!inputUrl.startsWith('http://') && !inputUrl.startsWith('https://')) {
+        inputUrl = 'https://' + inputUrl;
+      }
+
+      let parsedUrl;
+      try { 
+        parsedUrl = new URL(inputUrl); 
+      } catch (err) { 
+        alert('Пожалуйста, введите корректный URL адрес'); 
+        return; 
+      }
+
+      heroSection.style.display = 'none';
+      dashboardSection.style.display = 'block';
+      document.getElementById('target-display-url').textContent = `Target: ${parsedUrl.origin}`;
+      statusText.textContent = 'Scanning target...';
+      spinner.classList.remove('hidden');
+
+      // Reset indicators
+      const scoreCircle = document.getElementById('overall-score-val');
+      scoreCircle.classList.remove('error');
+      document.getElementById('ai-pulse-indicator').classList.remove('error');
+      document.getElementById('ai-status-text').textContent = 'AI Engine Active';
+
+      await runFullAudit(parsedUrl);
+    });
+
+    // Helper fetch with timeout
+    async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const response = await fetch(url, { ...options, signal: controller.signal, cache: 'no-cache' });
+        clearTimeout(id);
+        return response;
+      } catch (err) {
+        clearTimeout(id);
+        throw err;
+      }
+    }
+
+    async function runFullAudit(urlObj) {
+      const findings = [];
+      const origin = urlObj.origin;
+      const hostname = urlObj.hostname;
+
+      // Read Settings
+      const cfgSecurity = document.getElementById('set-check-security').checked;
+      const cfgHeaders = document.getElementById('set-check-headers').checked;
+      const cfgFiles = document.getElementById('set-check-files').checked;
+      const cfgSeo = document.getElementById('set-check-seo').checked;
+      const useCorsProxy = document.getElementById('set-cors-proxy').checked;
+      const timeoutMs = parseInt(document.getElementById('set-timeout').value) || 5000;
+
+      const fetchTarget = (path) => {
+        const fullUrl = `${origin}${path}`;
+        if (useCorsProxy) {
+          return fetchWithTimeout(`https://api.allorigins.win/raw?url=${encodeURIComponent(fullUrl)}`, {}, timeoutMs);
+        }
+        return fetchWithTimeout(fullUrl, {}, timeoutMs);
+      };
+
+      // PRE-FLIGHT / DOMAIN EXISTENCE CHECK
+      let mainPageResponse = null;
+      let connectionFailed = false;
+      let failureReason = '';
+
+      const startTime = performance.now();
+      try {
+        mainPageResponse = await fetchTarget('/');
+      } catch (err) {
+        connectionFailed = true;
+        if (err.name === 'AbortError') {
+          failureReason = `Превышено время ожидания ответа (тайм-аут ${timeoutMs / 1000} сек).`;
+        } else {
+          failureReason = `Не удалось установить соединение. Домен не существует, сервер недоступен или заблокирован сетевыми правилами/DNS.`;
+        }
+      }
+
+      // Если главная страница не загрузилась — отрабатываем глобальную ошибку недоступности
+      if (connectionFailed || !mainPageResponse) {
+        renderUnreachableDomainState(hostname, failureReason);
+        statusText.textContent = 'Audit Failed';
+        spinner.classList.add('hidden');
+        return;
+      }
+
+      // 1. SECURITY MODULE
+      if (cfgSecurity) {
+        if (urlObj.protocol === 'https:') {
+          findings.push({ category: 'security', title: 'HTTPS Enforced', severity: 'pass', desc: `Connection to ${hostname} uses TLS encryption.` });
+        } else {
+          findings.push({ category: 'security', title: 'Unencrypted HTTP Protocol', severity: 'high', desc: 'Plain HTTP connections can be intercepted or modified in transit.', remediation: 'Redirect all HTTP traffic to HTTPS.' });
+        }
+      }
+
+      // 2. CONFIG / SENSITIVE FILES MODULE
+      if (cfgFiles) {
+        // .git leak check
+        try {
+          const gitRes = await fetchTarget('/.git/HEAD');
+          if (gitRes.ok && (await gitRes.text()).includes('refs/')) {
+            findings.push({ category: 'config', title: 'Critical: Source Code Leak (.git)', severity: 'high', desc: 'Git repository folder is publicly accessible!', remediation: 'Restrict access to /.git/ directory in web server settings.' });
+          } else {
+            findings.push({ category: 'config', title: 'Git Directory Secured', severity: 'pass', desc: 'No publicly exposed /.git/HEAD directory detected.' });
+          }
+        } catch(e) {
+          findings.push({ category: 'config', title: 'Git Directory Secured', severity: 'pass', desc: 'Protected or unreachable /.git repository.' });
+        }
+
+        // security.txt
+        try {
+          const secRes = await fetchTarget('/.well-known/security.txt');
+          if (secRes.ok) {
+            findings.push({ category: 'config', title: 'security.txt Policy Present', severity: 'pass', desc: 'Standard security disclosure contact file exists.' });
+          } else {
+            findings.push({ category: 'config', title: 'Missing security.txt', severity: 'low', desc: 'No vulnerability reporting standard found at /.well-known/security.txt.', remediation: 'Add security.txt according to RFC 9116.' });
+          }
+        } catch (e) {
+          findings.push({ category: 'config', title: 'Missing security.txt', severity: 'low', desc: 'No security disclosure file detected.', remediation: 'Add /.well-known/security.txt' });
+        }
+
+        // sitemap.xml
+        try {
+          const smRes = await fetchTarget('/sitemap.xml');
+          if (smRes.ok) findings.push({ category: 'config', title: 'sitemap.xml Found', severity: 'pass', desc: 'XML Sitemap is accessible.' });
+          else findings.push({ category: 'config', title: 'Missing sitemap.xml', severity: 'low', desc: 'Sitemap not found at root path.', remediation: 'Create and submit a sitemap.xml.' });
+        } catch(e) {}
+      }
+
+      // 3. HEADERS & SEO HTML PARSING
+      const endTime = performance.now();
+      const latency = Math.round(endTime - startTime);
+
+      findings.push({ category: 'seo', title: `Response Latency (${latency} ms)`, severity: latency < 500 ? 'pass' : 'low', desc: `Server initial response time measured at ${latency}ms.` });
+
+      if (cfgHeaders) {
+        const csp = mainPageResponse.headers.get('content-security-policy');
+        const hsts = mainPageResponse.headers.get('strict-transport-security');
+        const xfo = mainPageResponse.headers.get('x-frame-options');
+        const xcto = mainPageResponse.headers.get('x-content-type-options');
+        const rp = mainPageResponse.headers.get('referrer-policy');
+        const serverHeader = mainPageResponse.headers.get('server');
+        const poweredBy = mainPageResponse.headers.get('x-powered-by');
+
+        if (csp) findings.push({ category: 'headers', title: 'Content Security Policy (CSP)', severity: 'pass', desc: 'CSP header is set to mitigate XSS.' });
+        else findings.push({ category: 'headers', title: 'Missing CSP Header', severity: 'high', desc: 'Absence of CSP increases risk of Cross-Site Scripting.', remediation: "Content-Security-Policy: default-src 'self';" });
+
+        if (hsts) findings.push({ category: 'headers', title: 'HSTS Active', severity: 'pass', desc: 'Strict-Transport-Security header enforces encrypted connections.' });
+        else findings.push({ category: 'headers', title: 'Missing HSTS Header', severity: 'high', desc: 'Browser isn\'t instructed to force HTTPS.', remediation: "Strict-Transport-Security: max-age=31536000; includeSubDomains" });
+
+        if (xfo) findings.push({ category: 'headers', title: 'Clickjacking Protection', severity: 'pass', desc: `X-Frame-Options set to: ${xfo}` });
+        else findings.push({ category: 'headers', title: 'Missing X-Frame-Options', severity: 'medium', desc: 'Site can be embedded in iframes on malicious domains.', remediation: "X-Frame-Options: DENY" });
+
+        if (xcto) findings.push({ category: 'headers', title: 'MIME Sniffing Prevented', severity: 'pass', desc: 'X-Content-Type-Options: nosniff active.' });
+        else findings.push({ category: 'headers', title: 'Missing X-Content-Type-Options', severity: 'low', desc: 'MIME sniffing not disabled.', remediation: "X-Content-Type-Options: nosniff" });
+
+        if (rp) findings.push({ category: 'headers', title: 'Referrer-Policy Active', severity: 'pass', desc: `Referrer Policy set to: ${rp}` });
+        else findings.push({ category: 'headers', title: 'Missing Referrer-Policy', severity: 'low', desc: 'Referrer information may leak to external sites.', remediation: "Referrer-Policy: strict-origin-when-cross-origin" });
+
+        if (serverHeader || poweredBy) {
+          findings.push({ category: 'headers', title: 'Server Banner Exposure', severity: 'medium', desc: `Server/Framework info leaked: ${serverHeader || ''} ${poweredBy || ''}`, remediation: 'Disable Server and X-Powered-By header broadcasting.' });
+        } else {
+          findings.push({ category: 'headers', title: 'Server Tokens Hidden', severity: 'pass', desc: 'No direct server software information disclosed in response.' });
+        }
+      }
+
+      if (cfgSeo) {
+        try {
+          const pageText = await mainPageResponse.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(pageText, 'text/html');
+
+          const titleTag = doc.querySelector('title')?.textContent;
+          const metaDesc = doc.querySelector('meta[name="description"]')?.getAttribute('content');
+          const ogImage = doc.querySelector('meta[property="og:image"]')?.getAttribute('content');
+
+          if (titleTag && titleTag.trim().length > 0) {
+            findings.push({ category: 'seo', title: 'HTML Title Tag Present', severity: 'pass', desc: `Title: "${titleTag.substring(0, 60)}..."` });
+          } else {
+            findings.push({ category: 'seo', title: 'Missing HTML Title Tag', severity: 'high', desc: 'No <title> tag found on homepage.', remediation: '<title>Your Page Title</title>' });
+          }
+
+          if (metaDesc && metaDesc.trim().length > 10) {
+            findings.push({ category: 'seo', title: 'Meta Description Present', severity: 'pass', desc: `Description snippet: "${metaDesc.substring(0, 70)}..."` });
+          } else {
+            findings.push({ category: 'seo', title: 'Missing Meta Description', severity: 'medium', desc: 'Search engines lack structured snippet summary.', remediation: '<meta name="description" content="...">`' });
+          }
+
+          if (ogImage) {
+            findings.push({ category: 'seo', title: 'Open Graph Image Configured', severity: 'pass', desc: 'og:image metadata found for social sharing.' });
+          } else {
+            findings.push({ category: 'seo', title: 'Missing Open Graph Image', severity: 'low', desc: 'Social previews won\'t display rich media images.', remediation: '<meta property="og:image" content="https://.../og.jpg">' });
+          }
+        } catch(e) {}
+      }
+
+      const scores = calculateScores(findings);
+      renderDashboard(origin, scores, findings);
+      statusText.textContent = 'Completed';
+      spinner.classList.add('hidden');
+    }
+
+    // РЕНДЕР ОШИБКИ НЕДОСТУПНОСТИ САЙТА
+    function renderUnreachableDomainState(hostname, reason) {
+      document.getElementById('overall-score-val').textContent = 'ERR';
+      document.getElementById('overall-score-val').classList.add('error');
+      
+      document.getElementById('score-security').textContent = '0';
+      document.getElementById('score-headers').textContent = '0';
+      document.getElementById('score-config').textContent = '0';
+      document.getElementById('score-seo').textContent = '0';
+
+      document.getElementById('overall-status-heading').textContent = 'Ошибка доступа к целевому ресурсу';
+      
+      document.getElementById('ai-pulse-indicator').classList.add('error');
+      document.getElementById('ai-status-text').textContent = 'Host Offline';
+
+      // ИИ-Резюме при ошибке
+      document.getElementById('ai-summary-body').innerHTML = `
+        <div class="ai-alert-box">
+          <h4>🚨 Не удалось подключиться к домену: ${hostname}</h4>
+          <p>${reason}</p>
+        </div>
+        <p><strong>Возможные причины и рекомендации ИИ-агента:</strong></p>
+        <ul>
+          <li><strong>Проверьте правильность доменного имени:</strong> Убедитесь, что опечаток нет и домен зарегистрирован.</li>
+          <li><strong>Проблема DNS / Хостинга:</strong> Сервер может быть выключен, DNS-записи (A/AAAA) не настроены или ещё не обновились.</li>
+          <li><strong>Блокировка CORS / SSL:</strong> Если ресурс работает локально или использует самоподписанный SSL-сертификат, браузер блокирует к нему прямое подключение из соображений безопасности.</li>
+          <li><strong>Попробуйте CORS-Proxy:</strong> Откройте ⚙️ <strong>Settings</strong> в верхнем меню и включите переключатель <em>"Использовать CORS-Proxy"</em>.</li>
+        </ul>
+      `;
+
+      findingsContainer.innerHTML = `
+        <div class="finding-card">
+          <div class="finding-header">
+            <div class="finding-title"><span>❌</span> Network & Domain Resolution Failure</div>
+            <span class="severity-badge sev-high">CRITICAL</span>
+          </div>
+          <div class="finding-desc">${reason}</div>
+          <div class="code-block">
+            <code>ping ${hostname}</code>
+            <button class="copy-btn" onclick="copyCode(this, 'ping ${hostname}')">Copy Cmd</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('findings-count').textContent = '1 error detected';
+    }
+
+    function calculateScores(findings) {
+      const categories = ['security', 'headers', 'config', 'seo'];
+      const scores = { overall: 100, security: 100, headers: 100, config: 100, seo: 100 };
+      const categoryDeductions = { security: 0, headers: 0, config: 0, seo: 0 };
+
+      findings.forEach(item => {
+        const cat = item.category;
+        if (categoryDeductions.hasOwnProperty(cat)) {
+          if (item.severity === 'high') categoryDeductions[cat] += 25;
+          else if (item.severity === 'medium') categoryDeductions[cat] += 12;
+          else if (item.severity === 'low') categoryDeductions[cat] += 5;
+        }
+      });
+
+      let sumScores = 0;
+      categories.forEach(cat => {
+        scores[cat] = Math.max(10, 100 - categoryDeductions[cat]);
+        sumScores += scores[cat];
+      });
+
+      scores.overall = Math.round(sumScores / categories.length);
+      return scores;
+    }
+
+    // ИИ-Анализатор / ИИ Генератор Резюме
+    function generateAISummary(findings, scores) {
+      const highSev = findings.filter(f => f.severity === 'high');
+      const medSev = findings.filter(f => f.severity === 'medium');
+
+      let html = `<p>На основе автоматического сканирования получен суммарный индекс защищенности <strong>${scores.overall}/100</strong>.</p>`;
+
+      if (highSev.length > 0) {
+        html += `<div class="ai-alert-box">
+          <h4>🚨 Обнаружены критические уязвимости (${highSev.length})</h4>
+          <p>Данные проблемы требуют первоочередного вмешательства, так как напрямую влияют на безопасность пользователей и данных.</p>
+        </div><ul>`;
+        highSev.forEach(item => {
+          html += `<li><strong>${item.title}:</strong> ${item.desc}</li>`;
+        });
+        html += `</ul>`;
+      } else {
+        html += `<p><strong>✅ Критических уязвимостей высокого риска не обнаружено.</strong> Базовые стандарты шифрования и безопасности соблюдены.</p>`;
+      }
+
+      if (medSev.length > 0) {
+        html += `<p><strong>⚠️ Средний риск (${medSev.length}):</strong> Рекомендуется обратить внимание на ${medSev.map(m => m.title).join(', ')}.</p>`;
+      }
+
+      html += `<p><strong>⚡ Рекомендованные Quick-Fix действия:</strong></p><ol>`;
+      const fixable = findings.filter(f => f.remediation);
+      if (fixable.length > 0) {
+        fixable.slice(0, 3).forEach(f => {
+          html += `<li>Внедрить <code>${escapeHtml(f.remediation)}</code> (для уязвимости <em>${f.title}</em>).</li>`;
+        });
+      } else {
+        html += `<li>Конфигурация сервера находится в оптимальном состоянии. Дополнительных быстрых исправлений не требуется.</li>`;
+      }
+      html += `</ol>`;
+
+      return html;
+    }
+
+    function renderDashboard(origin, scores, findings) {
+      currentAuditData = { url: origin, timestamp: new Date().toISOString(), scores, findings };
+      
+      document.getElementById('overall-score-val').textContent = scores.overall;
+      document.getElementById('score-security').textContent = scores.security;
+      document.getElementById('score-headers').textContent = scores.headers;
+      document.getElementById('score-config').textContent = scores.config;
+      document.getElementById('score-seo').textContent = scores.seo;
+      
+      document.getElementById('overall-status-heading').textContent = scores.overall >= 80 ? 'Audit Complete — Good Posture' : 'Audit Complete — Action Required';
+      
+      // Внедрение ИИ Резюме
+      document.getElementById('ai-summary-body').innerHTML = generateAISummary(findings, scores);
+
+      renderFindingsList(findings);
+    }
+
+    function renderFindingsList(findings) {
+      findingsContainer.innerHTML = '';
+      document.getElementById('findings-count').textContent = `${findings.length} checks performed`;
+
+      findings.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'finding-card';
+        card.setAttribute('data-category', item.category);
+
+        let sevClass = 'sev-low';
+        let sevText = item.severity.toUpperCase();
+
+        if (item.severity === 'high') sevClass = 'sev-high';
+        else if (item.severity === 'medium') sevClass = 'sev-medium';
+        else if (item.severity === 'pass') { sevClass = 'sev-pass'; sevText = 'PASSED'; }
+
+        card.innerHTML = `
+          <div class="finding-header">
+            <div class="finding-title">
+              <span>${item.severity === 'pass' ? '✓' : '⚠️'}</span>
+              ${item.title}
+            </div>
+            <span class="severity-badge ${sevClass}">${sevText}</span>
+          </div>
+          <div class="finding-desc">${item.desc}</div>
+          ${item.remediation ? `
+            <div class="code-block">
+              <code>${escapeHtml(item.remediation)}</code>
+              <button class="copy-btn" onclick="copyCode(this, '${escapeHtml(item.remediation)}')">Copy Fix</button>
+            </div>
+          ` : ''}
+        `;
+
+        findingsContainer.appendChild(card);
+      });
+    }
+
+    function filterCategory(cat, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const cards = findingsContainer.querySelectorAll('.finding-card');
+      cards.forEach(card => {
+        if (cat === 'all' || card.getAttribute('data-category') === cat) card.classList.remove('hidden');
+        else card.classList.add('hidden');
+      });
+    }
+
+    function copyCode(btn, code) {
+      navigator.clipboard.writeText(code);
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy Fix', 2000);
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function exportJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentAuditData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `webscan-report.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function exportPDF() { window.print(); }
+  </script>
+</body>
+</html>
